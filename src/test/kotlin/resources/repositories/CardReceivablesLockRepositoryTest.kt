@@ -46,6 +46,20 @@ class CardReceivablesLockRepositoryTest {
   }
 
   @Test
+  fun `should find by contract number with installments when exists`() {
+    // Given
+    val entity = createTestEntity()
+    val savedEntity = repository.save(entity)
+
+    // When
+    val result = repository.findByContractNumberWithInstallments(savedEntity.contractNumber)
+
+    // Then
+    assertNotNull(result)
+    assertEquals(savedEntity.contractNumber, result!!.contractNumber)
+  }
+
+  @Test
   fun `should find by contract number and status when exists`() {
     // Given
     val entity = createTestEntity()
@@ -141,6 +155,20 @@ class CardReceivablesLockRepositoryTest {
 
     // When
     val result = repository.findByIdWithRelationships(savedEntity.id)
+
+    // Then
+    assertNotNull(result)
+    assertEquals(savedEntity.id, result!!.id)
+  }
+
+  @Test
+  fun `should find by id with installments when exists`() {
+    // Given
+    val entity = createTestEntity()
+    val savedEntity = repository.save(entity)
+
+    // When
+    val result = repository.findByIdWithInstallments(savedEntity.id)
 
     // Then
     assertNotNull(result)

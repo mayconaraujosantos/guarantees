@@ -16,11 +16,19 @@ interface CardReceivablesLockRepository : JpaRepository<CardReceivablesLockEntit
         LEFT JOIN FETCH c.holders
         LEFT JOIN FETCH c.nucleaEntry
         LEFT JOIN FETCH c.cercEntry
-        LEFT JOIN FETCH c.contractInstallments
         WHERE c.id = :id
     """
   )
   fun findByIdWithRelationships(@Param("id") id: String): CardReceivablesLockEntity?
+
+  @Query(
+          """
+        SELECT c FROM CardReceivablesLockEntity c
+        LEFT JOIN FETCH c.contractInstallments
+        WHERE c.id = :id
+    """
+  )
+  fun findByIdWithInstallments(@Param("id") id: String): CardReceivablesLockEntity?
 
   // Buscar por contract_number simples
   fun findByContractNumber(contractNumber: String): CardReceivablesLockEntity
@@ -32,11 +40,21 @@ interface CardReceivablesLockRepository : JpaRepository<CardReceivablesLockEntit
         LEFT JOIN FETCH c.holders
         LEFT JOIN FETCH c.nucleaEntry
         LEFT JOIN FETCH c.cercEntry
-        LEFT JOIN FETCH c.contractInstallments
         WHERE c.contractNumber = :contractNumber
     """
   )
   fun findByContractNumberWithRelationships(
+          @Param("contractNumber") contractNumber: String
+  ): CardReceivablesLockEntity?
+
+  @Query(
+          """
+        SELECT c FROM CardReceivablesLockEntity c
+        LEFT JOIN FETCH c.contractInstallments
+        WHERE c.contractNumber = :contractNumber
+    """
+  )
+  fun findByContractNumberWithInstallments(
           @Param("contractNumber") contractNumber: String
   ): CardReceivablesLockEntity?
 
@@ -53,11 +71,22 @@ interface CardReceivablesLockRepository : JpaRepository<CardReceivablesLockEntit
         LEFT JOIN FETCH c.holders
         LEFT JOIN FETCH c.nucleaEntry
         LEFT JOIN FETCH c.cercEntry
-        LEFT JOIN FETCH c.contractInstallments
         WHERE c.contractNumber = :contractNumber AND c.status = :status
     """
   )
   fun findByContractNumberAndStatusWithRelationships(
+          @Param("contractNumber") contractNumber: String,
+          @Param("status") status: CardReceivablesLockStatus
+  ): CardReceivablesLockEntity?
+
+  @Query(
+          """
+        SELECT c FROM CardReceivablesLockEntity c
+        LEFT JOIN FETCH c.contractInstallments
+        WHERE c.contractNumber = :contractNumber AND c.status = :status
+    """
+  )
+  fun findByContractNumberAndStatusWithInstallments(
           @Param("contractNumber") contractNumber: String,
           @Param("status") status: CardReceivablesLockStatus
   ): CardReceivablesLockEntity?
