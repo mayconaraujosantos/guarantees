@@ -6,6 +6,7 @@ import com.finapp.domain.tables.CardReceivablesLockEntity
 import com.finapp.resources.repositories.CardReceivablesLockCercRepository
 import com.finapp.resources.repositories.CardReceivablesLockNucleaRepository
 import com.finapp.resources.repositories.CardReceivablesLockRepository
+import com.finapp.web.mappers.CardReceivablesLockEntityMapper
 import com.finapp.web.requests.CardReceivablesLockDto
 import io.mockk.every
 import io.mockk.mockk
@@ -431,7 +432,8 @@ class CardReceivablesLockDataAccessImplTest {
   }
 
   private fun createTestDto(): CardReceivablesLockDto {
-    return TestDataFactory.createCardReceivablesLockDto()
+    val entity = TestDataFactory.createCardReceivablesLockEntity()
+    return CardReceivablesLockEntityMapper.map(entity)
   }
 
   private fun createTestEntity(): CardReceivablesLockEntity {
