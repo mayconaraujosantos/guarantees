@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 @Repository
 interface CardReceivablesLockNucleaRepository :
@@ -16,18 +17,21 @@ interface CardReceivablesLockNucleaRepository :
   fun findByProtocol(protocol: String): List<CardReceivablesLockNucleaEntity>
 
   @Modifying
+  @Transactional
   @Query(
-          "UPDATE CardReceivablesLockNucleaEntity c SET c.creationRetryAttempts = c.creationRetryAttempts + 1, c.updatedAt = CURRENT_TIMESTAMP WHERE c.cardReceivablesLock.id = :id"
+          "UPDATE CardReceivablesLockNucleaEntity c SET c.creationRetryAttempts = c.creationRetryAttempts + 1, c.updatedAt = CURRENT_TIMESTAMP WHERE c.id = :id"
   )
   override fun incrementCreationRetryAttempts(@Param("id") id: String)
 
   @Modifying
+  @Transactional
   @Query(
-          "UPDATE CardReceivablesLockNucleaEntity c SET c.proactiveSearchAttempts = c.proactiveSearchAttempts + 1, c.updatedAt = CURRENT_TIMESTAMP WHERE c.cardReceivablesLock.id = :id"
+          "UPDATE CardReceivablesLockNucleaEntity c SET c.proactiveSearchAttempts = c.proactiveSearchAttempts + 1, c.updatedAt = CURRENT_TIMESTAMP WHERE c.id = :id"
   )
   override fun incrementProactiveSearchAttempts(@Param("id") id: String)
 
   @Modifying
+  @Transactional
   @Query(
           "UPDATE CardReceivablesLockNucleaEntity c SET c.protocol = :protocol, c.updatedAt = CURRENT_TIMESTAMP WHERE c.id = :id"
   )
