@@ -1,12 +1,13 @@
 package com.finapp.resources.repositories
 
 import com.finapp.domain.entities.CardReceivablesLockCercProtocol
+import com.finapp.domain.tables.CardReceivablesLockCercProtocolEntity
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
 interface CardReceivablesLockCercProtocolRepository :
-        JpaRepository<CardReceivablesLockCercProtocol, String> {
+        JpaRepository<CardReceivablesLockCercProtocolEntity, String> {
 
   fun findByCardReceivablesLockCercId(
           cardReceivablesLockCercId: String
