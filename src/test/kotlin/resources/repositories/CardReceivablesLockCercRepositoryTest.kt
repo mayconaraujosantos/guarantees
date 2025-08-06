@@ -14,12 +14,14 @@ import org.springframework.test.context.ActiveProfiles
 import utils.TestDataFactory
 
 @SpringBootTest(classes = [FinappGuaranteeCardReceivablesServiceApplication::class])
-@ActiveProfiles("test")
 class CardReceivablesLockCercRepositoryTest {
 
-  @Autowired private lateinit var cercRepository: CardReceivablesLockCercRepository
+  @Autowired
+  private lateinit var cercRepository: CardReceivablesLockCercRepository
 
-  @Autowired private lateinit var lockRepository: CardReceivablesLockRepository
+  @Autowired
+  private lateinit var lockRepository: CardReceivablesLockRepository
+
 
   @Test
   fun `should increment creation retry attempts`() {
