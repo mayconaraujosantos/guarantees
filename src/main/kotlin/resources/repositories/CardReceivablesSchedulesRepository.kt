@@ -4,8 +4,7 @@ import com.finapp.domain.entities.CardReceivablesSchedules
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
-@Repository
-interface CardReceivablesSchedulesRepository : JpaRepository<CardReceivablesSchedules, String> {
+interface CardReceivablesSchedulesRepository  {
 
   fun findByPersonId(personId: String): List<CardReceivablesSchedules>
 

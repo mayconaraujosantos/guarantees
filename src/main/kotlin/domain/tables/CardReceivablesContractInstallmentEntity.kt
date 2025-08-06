@@ -12,6 +12,8 @@ data class CardReceivablesContractInstallmentEntity(
         @JoinColumn(name = "card_receivables_lock_id", nullable = false)
         var cardReceivablesLock: CardReceivablesLockEntity?,
         val installmentNumber: Int,
+        @Column(name = "due_date")
         val date: LocalDate,
+        @Column(name = "installment_amount")
         val value: BigDecimal
 )

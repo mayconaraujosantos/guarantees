@@ -25,7 +25,7 @@ class CardReceivablesLockDataAccessImplTest {
   private lateinit var dataAccess: CardReceivablesLockDataAccessImpl
 
   @BeforeEach
-  fun `set up`() {
+  fun setUp() {
     cardReceivablesLockRepository = mockk()
     cardReceivablesLockNucleaRepository = mockk()
     cardReceivablesLockCercRepository = mockk()
@@ -143,7 +143,6 @@ class CardReceivablesLockDataAccessImplTest {
 
     // Then
     verify { cardReceivablesLockRepository.findByContractNumber(contractNumber) }
-    assert(result != null)
     assert(result.contractNumber == contractNumber)
   }
 

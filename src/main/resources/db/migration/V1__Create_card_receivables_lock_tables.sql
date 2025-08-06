@@ -104,7 +104,7 @@ CREATE TABLE card_receivables_contract_installment (
     card_receivables_lock_id VARCHAR(26) NOT NULL,
     installment_number INTEGER NOT NULL,
     due_date DATE NOT NULL,
-    amount DECIMAL(15, 2) NOT NULL,
+    installment_amount DECIMAL(15, 2) NOT NULL,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
     PRIMARY KEY (id),
