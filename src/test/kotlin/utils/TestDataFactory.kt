@@ -232,6 +232,74 @@ object TestDataFactory {
     )
   }
 
+  // Factory methods para CardReceivablesOwnerArrangementEntity
+  fun createCardReceivablesOwnerArrangementEntity(
+          id: String = "arrangement-id-123456789012345678901234",
+          arrangementCode: String = "ARRANGEMENT001",
+          cardReceivablesHolder: CardReceivablesHolderEntity? = null
+  ): CardReceivablesOwnerArrangementEntity {
+    return CardReceivablesOwnerArrangementEntity(
+            id = id,
+            arrangementCode = arrangementCode,
+            createdAt = TEST_NOW,
+            updatedAt = TEST_NOW,
+            cardReceivablesHolder = cardReceivablesHolder
+    )
+  }
+
+  // Factory methods para CardReceivablesOwnerAccreditorEntity
+  fun createCardReceivablesOwnerAccreditorEntity(
+          id: String = "accreditor-id-123456789012345678901234",
+          accreditorTaxId: String = "98765432109",
+          cardReceivablesHolder: CardReceivablesHolderEntity? = null
+  ): CardReceivablesOwnerAccreditorEntity {
+    return CardReceivablesOwnerAccreditorEntity(
+            id = id,
+            accreditorTaxId = accreditorTaxId,
+            createdAt = TEST_NOW,
+            updatedAt = TEST_NOW,
+            cardReceivablesHolder = cardReceivablesHolder
+    )
+  }
+
+  // Factory methods para CardReceivablesLockCercProtocolEntity
+  fun createCardReceivablesLockCercProtocolEntity(
+          id: String = "protocol-id-123456789012345678901234",
+          action: String = "CREATE",
+          protocol: String = TEST_PROTOCOL,
+          cardReceivablesLockCerc: CardReceivablesLockCercEntity? = null
+  ): CardReceivablesLockCercProtocolEntity {
+    return CardReceivablesLockCercProtocolEntity(
+            id = id,
+            action = action,
+            protocol = protocol,
+            createdAt = TEST_NOW,
+            cardReceivablesLockCerc = cardReceivablesLockCerc
+    )
+  }
+
+  // Factory methods para CardReceivablesSchedulesEntity
+  fun createCardReceivablesSchedulesEntity(
+          id: String = "schedules-id-123456789012345678901234",
+          personId: String = TEST_OWNER_PERSON_ID,
+          register: String = "CERC",
+          arrangement: String = "ARRANGEMENT001",
+          accreditor: String = "98765432109",
+          source: String = "SOURCE",
+          schedules: String = "{\"schedule\": \"data\"}"
+  ): CardReceivablesSchedulesEntity {
+    return CardReceivablesSchedulesEntity(
+            id = id,
+            personId = personId,
+            register = register,
+            arrangement = arrangement,
+            accreditor = accreditor,
+            source = source,
+            schedules = schedules,
+            createdAt = TEST_NOW
+    )
+  }
+
   // Métodos utilitários para criar entidades com relacionamentos
   fun createCardReceivablesLockWithNuclea(
           lockId: String = TEST_LOCK_ID,
@@ -271,5 +339,171 @@ object TestDataFactory {
     val lockEntity = createCardReceivablesLockEntity(lockId)
     lockEntity.addContractInstallment(installmentEntity)
     return lockEntity
+  }
+
+  // Métodos para criar entidades completas com todas as tabelas filhas
+  fun createCompleteCardReceivablesLockEntity(
+          lockId: String = TEST_LOCK_ID,
+          register: RegisterType = RegisterType.CERC,
+          includeHolders: Boolean = true,
+          includeInstallments: Boolean = true,
+          includeNuclea: Boolean = false,
+          includeCerc: Boolean = false
+  ): CardReceivablesLockEntity {
+    val lockEntity = createCardReceivablesLockEntity(lockId, register = register)
+
+    // Adicionar holders com arrangements e accreditors
+    if (includeHolders) {
+      val holder1 = createCardReceivablesHolderEntity("holder-1-123456789012345678901234")
+      val holder2 = createCardReceivablesHolderEntity("holder-2-123456789012345678901234")
+
+      // Adicionar arrangements para holder1
+      val arrangement1 =
+              createCardReceivablesOwnerArrangementEntity(
+                      "arrangement-1-123456789012345678901234",
+                      "ARRANGEMENT001",
+                      holder1
+              )
+      val arrangement2 =
+              createCardReceivablesOwnerArrangementEntity(
+                      "arrangement-2-123456789012345678901234",
+                      "ARRANGEMENT002",
+                      holder1
+              )
+      holder1.arrangements = listOf(arrangement1, arrangement2)
+
+      // Adicionar accreditors para holder1
+      val accreditor1 =
+              createCardReceivablesOwnerAccreditorEntity(
+                      "accreditor-1-123456789012345678901234",
+                      "11111111111",
+                      holder1
+              )
+      val accreditor2 =
+              createCardReceivablesOwnerAccreditorEntity(
+                      "accreditor-2-123456789012345678901234",
+                      "22222222222",
+                      holder1
+              )
+      holder1.accreditors = listOf(accreditor1, accreditor2)
+
+      // Adicionar arrangements para holder2
+      val arrangement3 =
+              createCardReceivablesOwnerArrangementEntity(
+                      "arrangement-3-123456789012345678901234",
+                      "ARRANGEMENT003",
+                      holder2
+              )
+      holder2.arrangements = listOf(arrangement3)
+
+      lockEntity.addHolder(holder1)
+      lockEntity.addHolder(holder2)
+    }
+
+    // Adicionar contract installments
+    if (includeInstallments) {
+      val installment1 =
+              createCardReceivablesContractInstallmentEntity(
+                      "installment-1-123456789012345678901234",
+                      1
+              )
+      val installment2 =
+              createCardReceivablesContractInstallmentEntity(
+                      "installment-2-123456789012345678901234",
+                      2
+              )
+      val installment3 =
+              createCardReceivablesContractInstallmentEntity(
+                      "installment-3-123456789012345678901234",
+                      3
+              )
+
+      lockEntity.addContractInstallment(installment1)
+      lockEntity.addContractInstallment(installment2)
+      lockEntity.addContractInstallment(installment3)
+    }
+
+    // Adicionar nuclea entry se necessário
+    if (includeNuclea && register == RegisterType.NUCLEA) {
+      val nucleaEntity =
+              createCardReceivablesLockNucleaEntity(
+                      "nuclea-123456789012345678901234",
+                      "NUCLEA-PROTOCOL-001"
+              )
+      lockEntity.assignNucleaEntry(nucleaEntity)
+    }
+
+    // Adicionar cerc entry se necessário
+    if (includeCerc && register == RegisterType.CERC) {
+      val cercEntity =
+              createCardReceivablesLockCercEntity(
+                      "cerc-123456789012345678901234",
+                      "CERC-PROTOCOL-001"
+              )
+
+      // Adicionar protocols para CERC
+      val protocol1 =
+              createCardReceivablesLockCercProtocolEntity(
+                      "protocol-1-123456789012345678901234",
+                      "CREATE",
+                      "CERC-PROTOCOL-001",
+                      cercEntity
+              )
+      val protocol2 =
+              createCardReceivablesLockCercProtocolEntity(
+                      "protocol-2-123456789012345678901234",
+                      "UPDATE",
+                      "CERC-PROTOCOL-002",
+                      cercEntity
+              )
+      cercEntity.protocols = listOf(protocol1, protocol2)
+
+      lockEntity.assignCercEntry(cercEntity)
+    }
+
+    return lockEntity
+  }
+
+  // Método para criar CardReceivablesLockEntity com NUCLEA completo
+  fun createCompleteNucleaCardReceivablesLockEntity(
+          lockId: String = TEST_LOCK_ID
+  ): CardReceivablesLockEntity {
+    return createCompleteCardReceivablesLockEntity(
+            lockId = lockId,
+            register = RegisterType.NUCLEA,
+            includeHolders = true,
+            includeInstallments = true,
+            includeNuclea = true,
+            includeCerc = false
+    )
+  }
+
+  // Método para criar CardReceivablesLockEntity com CERC completo
+  fun createCompleteCercCardReceivablesLockEntity(
+          lockId: String = TEST_LOCK_ID
+  ): CardReceivablesLockEntity {
+    return createCompleteCardReceivablesLockEntity(
+            lockId = lockId,
+            register = RegisterType.CERC,
+            includeHolders = true,
+            includeInstallments = true,
+            includeNuclea = false,
+            includeCerc = true
+    )
+  }
+
+  // Método para criar CardReceivablesLockEntity mínima (apenas dados básicos)
+  fun createMinimalCardReceivablesLockEntity(
+          lockId: String = TEST_LOCK_ID,
+          register: RegisterType = RegisterType.CERC
+  ): CardReceivablesLockEntity {
+    return createCompleteCardReceivablesLockEntity(
+            lockId = lockId,
+            register = register,
+            includeHolders = false,
+            includeInstallments = false,
+            includeNuclea = false,
+            includeCerc = false
+    )
   }
 }
