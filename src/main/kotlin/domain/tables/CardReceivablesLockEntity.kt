@@ -77,8 +77,26 @@ data class CardReceivablesLockEntity(
     cerc.cardReceivablesLock = this
   }
 
+  fun requireNucleaEntry(): CardReceivablesLockNucleaEntity {
+    return nucleaEntry ?: throw IllegalStateException("NucleaEntry is required but not set")
+  }
+
   fun requireCercEntry(): CardReceivablesLockCercEntity {
     return cercEntry ?: throw IllegalStateException("CercEntry is required but not set")
+  }
+
+  fun validateNucleaEntryForRegister(): Boolean {
+    return when (register) {
+      RegisterType.NUCLEA -> nucleaEntry != null
+      RegisterType.CERC -> true // CERC não requer nucleaEntry
+    }
+  }
+
+  fun requireNucleaEntryForRegister(): CardReceivablesLockNucleaEntity {
+    if (!validateNucleaEntryForRegister()) {
+      throw IllegalStateException("NucleaEntry is required for register type NUCLEA but not set")
+    }
+    return requireNucleaEntry()
   }
 
   // Helper methods for status control (Soft Delete)

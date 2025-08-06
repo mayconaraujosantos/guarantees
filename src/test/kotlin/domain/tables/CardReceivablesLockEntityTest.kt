@@ -1,6 +1,7 @@
 package domain.tables
 
 import com.finapp.domain.enums.CardReceivablesLockStatus
+import com.finapp.domain.enums.RegisterType
 import com.finapp.domain.tables.CardReceivablesContractInstallmentEntity
 import com.finapp.domain.tables.CardReceivablesHolderEntity
 import com.finapp.domain.tables.CardReceivablesLockCercEntity
@@ -147,6 +148,91 @@ class CardReceivablesLockEntityTest {
   }
 
   @Test
+  fun `should require nuclea entry to be set`() {
+    // Given
+    val lock = createTestCardReceivablesLock()
+    val nuclea = createTestNucleaEntity()
+
+    // When
+    lock.assignNucleaEntry(nuclea)
+
+    // Then
+    assert(lock.nucleaEntry == nuclea)
+    assert(nuclea.cardReceivablesLock == lock)
+    assert(lock.requireNucleaEntry() == nuclea)
+  }
+
+  @Test
+  fun `should throw exception when nuclea entry is not set`() {
+    // Given
+    val lock = createTestCardReceivablesLock()
+
+    // When & Then
+    assertThrows<IllegalStateException> { lock.requireNucleaEntry() }
+  }
+
+  @Test
+  fun `should validate nuclea entry for NUCLEA register type`() {
+    // Given
+    val lock = createTestCardReceivablesLock(RegisterType.NUCLEA)
+    lock.assignNucleaEntry(createTestNucleaEntity())
+
+    // When
+    val isValid = lock.validateNucleaEntryForRegister()
+
+    // Then
+    assert(isValid)
+  }
+
+  @Test
+  fun `should not validate nuclea entry for NUCLEA register type when null`() {
+    // Given
+    val lock = createTestCardReceivablesLock(RegisterType.NUCLEA)
+
+    // When
+    val isValid = lock.validateNucleaEntryForRegister()
+
+    // Then
+    assert(!isValid)
+  }
+
+  @Test
+  fun `should validate nuclea entry for CERC register type even when null`() {
+    // Given
+    val lock = createTestCardReceivablesLock(RegisterType.CERC)
+    // CERC não requer nucleaEntry, então deve ser válido mesmo quando null
+
+    // When
+    val isValid = lock.validateNucleaEntryForRegister()
+
+    // Then
+    assert(isValid)
+  }
+
+  @Test
+  fun `should require nuclea entry for NUCLEA register type when set`() {
+    // Given
+    val lock = createTestCardReceivablesLock(RegisterType.NUCLEA)
+    val nuclea = createTestNucleaEntity()
+    lock.assignNucleaEntry(nuclea)
+
+    // When
+    val result = lock.requireNucleaEntryForRegister()
+
+    // Then
+    assert(result == nuclea)
+  }
+
+  @Test
+  fun `should throw exception when requiring nuclea entry for NUCLEA register type but not set`() {
+    // Given
+    val lock = createTestCardReceivablesLock(RegisterType.NUCLEA)
+
+    // When & Then
+    assertThrows<IllegalStateException> { lock.requireNucleaEntryForRegister() }
+  }
+
+  @Test
   fun `should activate card receivables lock`() {
     // Given
     val lock = createTestCardReceivablesLock()
@@ -178,9 +264,12 @@ class CardReceivablesLockEntityTest {
     )
   }
 
-  private fun createTestCardReceivablesLock(): CardReceivablesLockEntity {
+  private fun createTestCardReceivablesLock(
+          register: RegisterType = RegisterType.CERC
+  ): CardReceivablesLockEntity {
     return TestDataFactory.createCardReceivablesLockEntity(
-            status = CardReceivablesLockStatus.INACTIVE
+            status = CardReceivablesLockStatus.INACTIVE,
+            register = register
     )
   }
 
